@@ -1,5 +1,10 @@
-FROM openshift/ruby-20-centos
-RUN gem install sinatra
-ADD app.rb /tmp/app.rb
+FROM openshift/ruby-20-centos7
+
+USER default
 EXPOSE 8080
-CMD ruby /tmp/app.rb
+
+ENV RACK_ENV production
+ENV RAILS_ENV production
+COPY . /opt/openshift/src/
+RUN scl enable ror40 "bundle install"
+CMD ["scl", "enable", "ror40", "./run.sh"]
