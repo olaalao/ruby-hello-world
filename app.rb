@@ -1,12 +1,10 @@
-require 'sinatra'
+FROM openshift/ruby-20-centos7
 
-set :bind, '0.0.0.0'
-set :port,8080
-get '/' do
-  "Hello! Rebuild image!\n"+
-# ENV values are generated during template processing
-# and then passed to the container when openshift launches it.
-  "User is #{ENV['ADMIN_USERNAME']}\n"+
-  "Password is #{ENV['ADMIN_PASSWORD']}\n"+
-  "DB password is #{ENV['DB_PASSWORD']}\n"
-end
+USER default
+EXPOSE 8080
+
+ENV RACK_ENV production
+ENV RAILS_ENV production
+COPY . /opt/openshift/src/
+RUN scl enable ror40 "bundle install"
+CMD ["scl", "enable", "ror40", "./run.sh"]
